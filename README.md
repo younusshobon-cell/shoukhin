@@ -98,3 +98,29 @@ Tabs include order history, purchased pieces, saved products, personal details a
 Shopping totals include delivery fees and represent locally created demo orders, not collected payments.
 Older demo orders without stored prices use the catalog price as a fallback for their item breakdown.
 This remains a browser-local demo, without secure accounts or cross-device synchronization.
+
+## Storefront improvements — October 2026
+
+The existing burgundy (#682636), ivory and neutral palette is preserved.
+
+- Sticky navigation, collection shortcuts, global search and a direct wishlist link.
+- Size links on product cards, accurate discount percentages, touch-accessible quick previews and enlarged product photography.
+- Search across names, categories, fabrics and descriptions; size, fabric, price and stock filters; clear-filter control; URL-persisted filters.
+- Explicit size selection, product specifications, related styles and bag/checkout links after adding a product.
+- More readable mobile layouts, larger quantity controls, optional checkout email, Bangladesh mobile-number validation and stock revalidation.
+- Shopping-help page with sizing guidance, sample delivery rates and transparent demo FAQs. No unverified garment measurements, delivery promises or return guarantees have been added.
+- Wishlist changes preserve product size selection and catalog filter state.
+
+Research reviewed seven Bangladesh retailers (not a verified virality ranking):
+
+1. Aarong — https://www.aarong.com/bgd/home — category browsing and customer service.
+2. YELLOW — https://yellowclothing.net — collection storytelling and searchable product discovery.
+3. Sailor — https://www.sailor.clothing — search and shopping-information structure; limited server-rendered content.
+4. Ecstasy — https://www.ecstasybd.com — category hierarchy, new arrivals and size help.
+5. Cats Eye — https://catseye.com.bd — visible prices, discounts, stock and wishlist.
+6. Richman — https://richmanbd.com — editorial collection presentation.
+7. Twelve — https://twelvebd.com/collections/all-womens-collection — size, product-type and price filters.
+
+Le Reve product/search results were also consulted for size-help and filter patterns; its main page could not be retrieved. No reference retailer code, logos or additional photography were copied.
+
+Validation: build, JavaScript syntax, route/DOM smoke checks, search/filter reset, wishlist toggling, mobile-menu state, product-size deep links, add-to-bag stock limits, demo checkout totals and malformed-storage fallback. A local browser preview was unavailable in the remote browser, so visual breakpoint verification remains outstanding. GitHub edits do not automatically update the live site because the current project uses manual Cloudflare uploads.
