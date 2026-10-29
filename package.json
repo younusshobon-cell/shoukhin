@@ -3,6 +3,23 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "scripts": { "build": "node scripts/build.mjs", "dev": "node scripts/serve.mjs", "preview": "node scripts/serve.mjs dist" },
-  "engines": { "node": ">=20" }
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "dev": "wrangler pages dev --local",
+    "preview": "npm run build && wrangler pages dev dist",
+    "hash-password": "node scripts/hash-password.mjs",
+    "db:init": "wrangler d1 execute shoukhin-db --remote --file=migrations/0001_init.sql",
+    "db:seed": "wrangler d1 execute shoukhin-db --remote --file=migrations/0002_seed.sql",
+    "db:init:local": "wrangler d1 execute shoukhin-db --local --file=migrations/0001_init.sql",
+    "db:seed:local": "wrangler d1 execute shoukhin-db --local --file=migrations/0002_seed.sql"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "wrangler": "^4.42.0"
+  },
+  "devDependencies": {
+    "wrangler": "^4.42.0"
+  }
 }

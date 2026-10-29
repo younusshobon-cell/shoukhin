@@ -1,126 +1,182 @@
-# Shoukhin storefront
+# Shoukhin
 
-A responsive women's clothing storefront with a burgundy and ivory visual identity. This is a complete front-end demo, ready to put in a Git repository and deploy as a static site on Cloudflare Pages.
+Storefront and dashboard for Shoukhin, a Bangladeshi women's wear shop.
+Static front end on Cloudflare Pages, API on Pages Functions, data in D1, product
+photos in R2. No build framework, no web fonts, one request to boot the shop.
 
-## Included
-
-- Home, shop, categories and offers pages.
-- Product details, sizes, prices, discount labels and in/out-of-stock states.
-- Category filters, search, price sorting and in-stock filtering.
-- Wishlist and shopping bag with stock-aware quantities.
-- Demo checkout and device-local order history.
-- Customer dashboard with saved products, shopping bag, order totals, purchased pieces, repeat shopping links, editable customer details and delivery address.
-- Product card borders with hover and keyboard-focus feedback.
-- New demo orders preserve product prices and images at checkout.
-- Responsive layouts, keyboard focus states, reduced-motion support, favicon and security headers.
-- Self-hosted WebP demo photos; no third-party runtime dependencies.
-
-## Run locally
-
-Requires Node.js 20 or newer. No dependency install is necessary.
-
-```sh
-npm run dev
+```
+public/            storefront (index.html, styles.css, app.js) + /admin dashboard
+public/assets/     imagery, webp at two widths
+functions/api/     Pages Functions: catalogue, orders, products, coupons, inbox, auth
+migrations/        D1 schema and starter catalogue
+scripts/           build, dev server, password hashing
 ```
 
-Open http://localhost:3000. Do not open index.html directly with file:// because the catalog is loaded as a JavaScript module.
+---
 
-```sh
+## First-time setup
+
+Everything below is done once. The database and R2 bucket already exist in the
+Cloudflare account (`shoukhin-db`, `shoukhin-media`) and the schema and starter
+catalogue are already applied.
+
+### 1. Set the dashboard password
+
+The password is never stored in the database. Generate a hash:
+
+```bash
+npm install
+npm run hash-password -- "a long password you will remember"
+```
+
+In the Cloudflare dashboard, open the Pages project → **Settings → Environment
+variables** and add both, marked **Encrypt**:
+
+| Name | Value |
+|---|---|
+| `ADMIN_PASSWORD_HASH` | the `pbkdf2$...` line the script printed |
+| `SESSION_SECRET` | the random string the script printed |
+
+Add them to **Production** and **Preview** so the preview deployments work too.
+Redeploy after saving; environment variables only apply to new builds.
+
+The dashboard is then at `/admin`. Eight wrong attempts locks sign-in for 15 minutes.
+
+### 2. Fill in your real details
+
+Sign in to `/admin` → **Settings** and replace the placeholders: hotline, bKash,
+Nagad and Rocket numbers, WhatsApp number, delivery charges, address. Anything
+left empty simply disappears from the storefront, so an empty bKash number hides
+bKash at checkout.
+
+### 3. Replace the demo catalogue
+
+The 24 seeded products are placeholders with generated imagery, there to show the
+layout working. Archive them from **Products** once your real inventory is in.
+
+---
+
+## Images
+
+The imagery shipped here was generated for this project, so it is free of any
+third-party rights. It is still placeholder work: replace it with real Shoukhin
+photography before you push the store properly.
+
+**Two ways to swap an image.**
+
+*From the dashboard (normal way).* Products → Edit → **Upload**. The file goes to
+R2 and the product points at it. Accepts WebP, JPEG, PNG and AVIF up to 8 MB.
+
+*By replacing a file (bulk way).* Keep the existing filenames and the whole site
+updates at once. Export at **900 × 1117** for products and **2000 × 1125** for
+hero images, then save a second copy at half width with `-sm` in the name:
+
+```
+public/assets/products/p01.webp      900 × 1117   product detail
+public/assets/products/p01-sm.webp   500 × 621    product card
+public/assets/hero/hero-1.webp       2000 × 1125  hero slider
+public/assets/hero/hero-1-sm.webp    1100 × 619   hero on mobile
+public/assets/categories/<slug>.webp 700 × 869    homepage category tile
+```
+
+Product cards load the `-sm` file and the detail page loads the full one, which is
+what keeps the catalogue fast on a phone. Shoot on a plain, evenly lit backdrop;
+the layout expects a 4:5 portrait crop with the garment centred.
+
+---
+
+## Connecting Facebook and WhatsApp
+
+The dashboard inbox is built and waiting, but it stays empty until Meta is
+connected. Those steps need your own business identity and phone number, so they
+have to happen in your Meta account. The dashboard has the same walkthrough under
+**Inbox → Connection guide**.
+
+1. **Create the app.** developers.facebook.com → new app, type **Business**.
+   Copy the **App Secret** from Settings → Basic.
+2. **Point the webhook here.** Add the **Webhooks** product.
+   Callback URL: `https://<your-domain>/api/webhooks/meta`.
+   Verify token: invent any string, and put the same string in dashboard Settings.
+   Subscribe to `messages` and `messaging_postbacks`.
+3. **Messenger.** Add the **Messenger** product, connect your Shoukhin Page,
+   generate a **Page access token**. Paste it and the Page ID into Settings.
+4. **WhatsApp.** Add the **WhatsApp** product, register your business number,
+   copy the **Phone number ID** and access token into Settings.
+5. **Go live.** In Development mode only your own test accounts can message the
+   app. Submit for review to open it to customers; `pages_messaging` approval
+   usually takes a few days.
+
+Every webhook delivery is checked against your App Secret, so a request that is
+not really from Meta is rejected.
+
+**Worth knowing:** Meta only allows a free-form reply within 24 hours of the
+customer's last message. After that you need an approved message template. This
+is Meta's rule, not a limit of this dashboard.
+
+---
+
+## Running it locally
+
+```bash
+npm install
+npm run db:init:local     # schema into a local D1
+npm run db:seed:local     # starter catalogue
+npm run hash-password -- "local password"
+```
+
+Put the hash in a `.dev.vars` file at the repo root (git-ignored):
+
+```
+ADMIN_PASSWORD_HASH=pbkdf2$150000$...
+SESSION_SECRET=anything-long-for-local
+```
+
+Then:
+
+```bash
 npm run build
-npm run preview
+npx wrangler pages dev dist --local
 ```
 
-The built deployment folder is `dist/`. A prebuilt version is included in this download for convenience, but the build command regenerates it from the source.
+Storefront at `http://localhost:8788`, dashboard at `/admin`.
 
-## Publish your repository
+---
 
-Extract this archive. Upload the CONTENTS of the `shoukhin` directory to the root of a new GitHub or GitLab repository. Include `public/`, `scripts/`, `package.json`, `README.md` and `.gitignore`. The generated `dist/` does not need to be committed.
+## How a few things work
 
-Alternatively, inside the extracted project:
+**Prices are never trusted from the browser.** The checkout endpoint re-reads every
+price, discount and stock level from D1 and recalculates the total. A tampered cart
+is charged the real price.
 
-```sh
-git init
-git add .
-git commit -m "Create Shoukhin storefront"
-git branch -M main
-git remote add origin YOUR_REPOSITORY_URL
-git push -u origin main
-```
+**Stock moves with the order.** Placing an order decrements stock; marking an order
+cancelled or returned puts it back exactly once.
 
-Replace YOUR_REPOSITORY_URL with the URL of your own empty repository.
+**Deleting a product archives it.** `is_active` goes to 0 so it leaves the shop but
+past orders still read correctly.
 
-## Cloudflare Pages — Git deployment
+**Settings split in two.** The storefront reads a safe subset. Meta tokens and the
+app secret never leave the server, and the dashboard shows them as dots.
 
-1. In Cloudflare, open Workers & Pages and create a Pages project connected to your GitHub or GitLab repo.
-2. Select the Shoukhin repository and the `main` production branch.
-3. Framework preset: **None**.
-4. Build command: **npm run build**.
-5. Build output directory: **dist**.
-6. Root directory: leave blank if the project files are in the repo root; use `shoukhin` if you committed the wrapper folder.
-7. Deploy, then attach your custom domain in the project's domain settings.
+**The session cookie is HttpOnly, Secure and SameSite=Lax**, signed with
+`SESSION_SECRET` and valid for 12 hours.
 
-The `_redirects` file supports direct visits and reloads on each route. Build output also includes route-specific index files. The `_headers` file provides a same-origin content security policy. If you add external fonts, analytics, images or payment integrations, explicitly update that policy.
+---
 
-Cloudflare documentation: https://developers.cloudflare.com/pages/framework-guides/deploy-anything/
-Git integration: https://developers.cloudflare.com/pages/get-started/git-integration/
+## Commands
 
-For Direct Upload instead of Git, build locally and upload the CONTENTS of `dist/` as your Pages site's assets. Do not upload the project source as the website.
+| Command | What it does |
+|---|---|
+| `npm run build` | Build to `dist/` |
+| `npm run dev` | Local dev server with bindings |
+| `npm run hash-password` | Generate `ADMIN_PASSWORD_HASH` |
+| `npm run db:init` / `db:seed` | Apply schema / starter data to the live D1 |
+| `npm run db:init:local` / `db:seed:local` | Same, against local D1 |
 
-## Customize the store
 
-- `public/catalog.js`: names, prices in BDT, old prices, fabric, descriptions, category, stock and sizes.
-- `public/assets/`: replace `look-1.webp` through `look-5.webp` with your own product photography.
-- `public/styles.css`: colours, typography and responsive layouts.
-- `public/app.js`: page content, boutique address, navigation, demo delivery rates and interactions.
-- `public/index.html`: site description, language and metadata.
-- `public/favicon.svg`: monogram favicon; the Shoukhin wordmark is a temporary typographic treatment, not the final brand logo.
+## Deployment in the connected Cloudflare account
 
-Product photos were cropped from the supplied reference screenshot. They are DEMO images and may belong to the reference retailer. Replace them with authorized Shoukhin product photos before commercial publication. The catalog names, specifications, prices, discounts, stock and delivery rates are illustrative, not verified Shoukhin inventory. Category photos reuse these demo assets.
+The recovered bundle referenced resources outside the connected account. The deployed account uses D1 database `shoukhin-db` with ID `7da89647-1efc-4648-b3c3-67a9df8e4f55`. Schema and demo seed data were applied to this new database. Never re-run the seed against real inventory: it uses INSERT OR REPLACE.
 
-## Before accepting real customers
+R2 is not enabled in this account. The MEDIA binding is commented out until the account owner activates R2 and creates `shoukhin-media`; then uncomment the R2 block in wrangler.toml and redeploy. Image-upload APIs return 503 while storage is unavailable; the bundled catalog images remain available.
 
-This package does NOT include a production commerce backend, secure login, payment processing, admin inventory management or order fulfilment. Checkout creates a clearly labelled demo order locally; no order is transmitted and no money is collected. Customer profiles, bag, wishlist and orders are saved only in this browser's localStorage, not synchronized between devices, and can disappear if browser storage is cleared. Do not store sensitive information in the demo.
-
-For a production store, connect a commerce backend or implement Cloudflare Pages Functions/Workers with a database, server-side inventory and order validation, secure authentication/session handling, authorization for each customer's records and an approved payment gateway. The server must calculate prices and delivery charges; never trust client data. Add final shipping/returns/privacy policies, verified business contact information, original product photos, per-size stock and a size guide. Remove demo notices only when these integrations actually work.
-
-## Research references
-
-Design structure was informed by the user-provided Shopping Zone BD product layout, Rainbows BD's product/options flow, Aarong's category browsing and customer order-history approach. Tailors Home BD could not be retrieved during this session. No reference brand's logo or site code was copied.
-
-## Current deployment
-
-The storefront is deployed to https://shoukhin.pages.dev on Cloudflare Pages.
-Source lives in the repository root; run `npm run build` and upload the generated `dist/` folder.
-Git-triggered auto-deployment is not configured because Cloudflare returned a Git installation error.
-
-`/account` opens the customer dashboard. Creating or editing a local profile returns to that dashboard.
-Tabs include order history, purchased pieces, saved products, personal details and delivery address.
-Shopping totals include delivery fees and represent locally created demo orders, not collected payments.
-Older demo orders without stored prices use the catalog price as a fallback for their item breakdown.
-This remains a browser-local demo, without secure accounts or cross-device synchronization.
-
-## Storefront improvements — October 2026
-
-The existing burgundy (#682636), ivory and neutral palette is preserved.
-
-- Sticky navigation, collection shortcuts, global search and a direct wishlist link.
-- Size links on product cards, accurate discount percentages, touch-accessible quick previews and enlarged product photography.
-- Search across names, categories, fabrics and descriptions; size, fabric, price and stock filters; clear-filter control; URL-persisted filters.
-- Explicit size selection, product specifications, related styles and bag/checkout links after adding a product.
-- More readable mobile layouts, larger quantity controls, optional checkout email, Bangladesh mobile-number validation and stock revalidation.
-- Shopping-help page with sizing guidance, sample delivery rates and transparent demo FAQs. No unverified garment measurements, delivery promises or return guarantees have been added.
-- Wishlist changes preserve product size selection and catalog filter state.
-
-Research reviewed seven Bangladesh retailers (not a verified virality ranking):
-
-1. Aarong — https://www.aarong.com/bgd/home — category browsing and customer service.
-2. YELLOW — https://yellowclothing.net — collection storytelling and searchable product discovery.
-3. Sailor — https://www.sailor.clothing — search and shopping-information structure; limited server-rendered content.
-4. Ecstasy — https://www.ecstasybd.com — category hierarchy, new arrivals and size help.
-5. Cats Eye — https://catseye.com.bd — visible prices, discounts, stock and wishlist.
-6. Richman — https://richmanbd.com — editorial collection presentation.
-7. Twelve — https://twelvebd.com/collections/all-womens-collection — size, product-type and price filters.
-
-Le Reve product/search results were also consulted for size-help and filter patterns; its main page could not be retrieved. No reference retailer code, logos or additional photography were copied.
-
-Validation: build, JavaScript syntax, route/DOM smoke checks, search/filter reset, wishlist toggling, mobile-menu state, product-size deep links, add-to-bag stock limits, demo checkout totals and malformed-storage fallback. A local browser preview was unavailable in the remote browser, so visual breakpoint verification remains outstanding. GitHub edits do not automatically update the live site because the current project uses manual Cloudflare uploads.
+SESSION_SECRET is configured as an encrypted Pages environment variable. Set a private ADMIN_PASSWORD_HASH in Production and Preview before using the dashboard. Do not commit passwords or hashes. Without an admin password, login returns 503 and protected APIs reject unauthenticated requests. The unsafe hardcoded session-secret fallback from the recovered bundle was removed.

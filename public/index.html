@@ -1,2 +1,191 @@
 <!doctype html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#682636"><meta name="description" content="Discover Shoukhin women's wear: cotton three-piece sets, kurtis and everyday favourites."><title>Shoukhin — Thoughtfully yours</title><link rel="icon" href="/favicon.svg"><link rel="stylesheet" href="/styles.css"><script type="module" src="/app.js"></script></head><body><a class="skip" href="#main">Skip to content</a><div id="app"></div><div id="toast" role="status" aria-live="polite"></div></body></html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#682636">
+<title>Shoukhin — Thoughtfully yours</title>
+<meta name="description" content="Shoukhin women's wear: cotton three piece sets, kurtis, sarees and everyday favourites. Cash on delivery all over Bangladesh.">
+<meta property="og:title" content="Shoukhin — Thoughtfully yours">
+<meta property="og:description" content="Cotton three piece sets, kurtis, sarees and everyday favourites. Cash on delivery all over Bangladesh.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="/assets/hero/hero-1-sm.webp">
+<link rel="icon" href="/favicon.svg">
+<link rel="preload" as="image" href="/assets/hero/hero-1-sm.webp" fetchpriority="high">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<!-- ───────────────────────────────────────────────── announcement -->
+<div class="announce" id="announce">
+  <div class="wrap announce-in">
+    <button class="announce-nav" data-announce="prev" aria-label="Previous notice">&#8249;</button>
+    <div class="announce-track" id="announceTrack" role="status" aria-live="polite"></div>
+    <button class="announce-nav" data-announce="next" aria-label="Next notice">&#8250;</button>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────────────────── header -->
+<header class="head" id="head">
+  <div class="wrap head-in">
+    <button class="icon-btn burger" id="burger" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+
+    <a class="logo" href="/" data-link>
+      <span class="logo-mark" aria-hidden="true">শ</span>
+      <span class="logo-text">Shoukhin<small>Thoughtfully yours</small></span>
+    </a>
+
+    <nav class="nav" id="nav" aria-label="Main">
+      <a href="/" data-link>Home</a>
+      <div class="nav-mega" id="navMega">
+        <button class="nav-trigger" aria-expanded="false">Shop <span aria-hidden="true">&#9662;</span></button>
+        <div class="mega" id="megaPanel"></div>
+      </div>
+      <a href="/shop?sort=new" data-link>New In</a>
+      <a href="/shop?filter=flash" data-link class="hot">Flash Sale</a>
+      <a href="/track" data-link>Track Order</a>
+      <a href="/page/about" data-link>Our Story</a>
+    </nav>
+
+    <div class="head-tools">
+      <button class="icon-btn" id="searchBtn" aria-label="Search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      </button>
+      <a class="icon-btn hide-sm" href="/wishlist" data-link aria-label="Wishlist">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.6-7-9.3A4 4 0 0 1 12 8a4 4 0 0 1 7-.7c0 4.7-7 12.7-7 12.7z"/></svg>
+        <span class="pip" id="wishPip" hidden>0</span>
+      </a>
+      <button class="icon-btn" id="cartBtn" aria-label="Shopping bag">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7V5.5a3 3 0 0 1 6 0V7"/></svg>
+        <span class="pip" id="cartPip" hidden>0</span>
+      </button>
+      <a class="hotline hide-md" id="hotlineLink" href="tel:">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a1 1 0 0 1-1.1 1A16 16 0 0 1 4 5.1 1 1 0 0 1 5 4z"/></svg>
+        <span id="hotlineText">Hotline</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- ───────────────────────────────────────────────────── main -->
+<main id="main"></main>
+
+<!-- ───────────────────────────────────────────────────── footer -->
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <span class="logo-mark" aria-hidden="true">শ</span>
+        <h3>Shoukhin</h3>
+        <p id="footBlurb">Thoughtfully made women's wear, cut for the way Bangladesh actually dresses. Cotton you can wear all day, finished by hand.</p>
+        <div class="foot-social" id="footSocial"></div>
+      </div>
+      <div class="foot-col">
+        <h4>Shop</h4>
+        <ul id="footCats"></ul>
+      </div>
+      <div class="foot-col">
+        <h4>Help</h4>
+        <ul>
+          <li><a href="/track" data-link>Track your order</a></li>
+          <li><a href="/page/shipping" data-link>Delivery</a></li>
+          <li><a href="/page/returns" data-link>Returns &amp; exchange</a></li>
+          <li><a href="/page/faq" data-link>FAQ</a></li>
+          <li><a href="/page/size-guide" data-link>Size guide</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="/page/about" data-link>Our story</a></li>
+          <li><a href="/page/contact" data-link>Contact</a></li>
+          <li><a href="/page/privacy" data-link>Privacy policy</a></li>
+          <li><a href="/page/terms" data-link>Terms &amp; conditions</a></li>
+        </ul>
+      </div>
+      <div class="foot-col foot-sub">
+        <h4>Stay in the loop</h4>
+        <p>New arrivals and offers, once a week. No spam.</p>
+        <form class="sub-form" id="subForm">
+          <input type="email" name="email" placeholder="your@email.com" required aria-label="Email address">
+          <button type="submit">Join</button>
+        </form>
+        <p class="sub-msg" id="subMsg" role="status"></p>
+        <div class="pay-row" id="payRow" aria-label="Payment methods"></div>
+      </div>
+    </div>
+    <div class="foot-bot">
+      <p id="footContact"></p>
+      <p>&copy; <span id="year"></span> Shoukhin. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<!-- ───────────────────────────────────────────────────── overlays -->
+<div class="scrim" id="scrim" hidden></div>
+
+<aside class="drawer cart-drawer" id="cartDrawer" aria-label="Shopping bag" aria-hidden="true">
+  <header class="drawer-head">
+    <h2>Your bag <span id="cartCount">(0)</span></h2>
+    <button class="icon-btn" data-close aria-label="Close bag">&times;</button>
+  </header>
+  <div class="drawer-body" id="cartBody"></div>
+  <footer class="drawer-foot" id="cartFoot" hidden>
+    <div class="ship-bar" id="shipBar"></div>
+    <div class="row total"><span>Subtotal</span><strong id="cartSubtotal">৳0</strong></div>
+    <p class="muted-sm">Delivery charge is added at checkout.</p>
+    <a class="btn btn-primary btn-block" href="/checkout" data-link>Checkout</a>
+    <a class="btn btn-ghost btn-block" href="/shop" data-link>Keep shopping</a>
+  </footer>
+</aside>
+
+<aside class="drawer menu-drawer" id="menuDrawer" aria-label="Menu" aria-hidden="true">
+  <header class="drawer-head">
+    <h2>Menu</h2>
+    <button class="icon-btn" data-close aria-label="Close menu">&times;</button>
+  </header>
+  <div class="drawer-body" id="menuBody"></div>
+</aside>
+
+<div class="search-overlay" id="searchOverlay" aria-hidden="true">
+  <div class="search-panel">
+    <form id="searchForm" role="search">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input type="search" id="searchInput" placeholder="Search for three piece, kurti, saree…" aria-label="Search products" autocomplete="off">
+      <button type="button" class="icon-btn" data-close aria-label="Close search">&times;</button>
+    </form>
+    <div class="search-results" id="searchResults"></div>
+  </div>
+</div>
+
+<div class="modal" id="modal" aria-hidden="true">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <header class="modal-head">
+      <h2 id="modalTitle"></h2>
+      <button class="icon-btn" data-close aria-label="Close">&times;</button>
+    </header>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+
+<!-- floating chat -->
+<div class="chat-dock" id="chatDock"></div>
+
+<!-- mobile bottom nav -->
+<nav class="tabbar" aria-label="Quick links">
+  <a href="/" data-link data-tab="/"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg><span>Home</span></a>
+  <a href="/shop" data-link data-tab="/shop"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16v13H4z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/></svg><span>Shop</span></a>
+  <button id="tabSearch"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><span>Search</span></button>
+  <a href="/wishlist" data-link data-tab="/wishlist"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.6-7-9.3A4 4 0 0 1 12 8a4 4 0 0 1 7-.7c0 4.7-7 12.7-7 12.7z"/></svg><span>Saved</span><span class="pip" id="wishPip2" hidden>0</span></a>
+  <button id="tabCart"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7V5.5a3 3 0 0 1 6 0V7"/></svg><span>Bag</span><span class="pip" id="cartPip2" hidden>0</span></button>
+</nav>
+
+<script src="/app.js" type="module"></script>
+</body>
+</html>

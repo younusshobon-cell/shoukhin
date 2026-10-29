@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#282125">
+<meta name="robots" content="noindex, nofollow">
+<title>Shoukhin Dashboard</title>
+<link rel="icon" href="/favicon.svg">
+<link rel="stylesheet" href="/admin/admin.css">
+</head>
+<body class="booting">
+
+<!-- ─────────────────────────────────────────────── login gate -->
+<div class="gate" id="gate" hidden>
+  <form class="gate-card" id="loginForm">
+    <span class="gate-mark" aria-hidden="true">শ</span>
+    <h1>Shoukhin Dashboard</h1>
+    <p>Enter the dashboard password to continue.</p>
+    <label class="field">
+      <span>Password</span>
+      <input type="password" name="password" id="pw" autocomplete="current-password" required autofocus>
+    </label>
+    <button class="btn btn-primary btn-block" type="submit" id="loginBtn">Sign in</button>
+    <p class="gate-msg" id="gateMsg" role="status"></p>
+    <p class="gate-note" id="gateNote" hidden>
+      No password is configured yet. Run <code>npm run hash-password</code> and set
+      <code>ADMIN_PASSWORD_HASH</code> in your Cloudflare Pages environment variables.
+    </p>
+  </form>
+</div>
+
+<!-- ─────────────────────────────────────────────── app shell -->
+<div class="shell" id="shell" hidden>
+  <aside class="side" id="side">
+    <div class="side-top">
+      <span class="side-mark" aria-hidden="true">শ</span>
+      <div><b>Shoukhin</b><small>Dashboard</small></div>
+    </div>
+    <nav class="side-nav">
+      <button data-view="overview" class="on"><svg viewBox="0 0 24 24"><path d="M4 13h7V4H4zM13 9h7V4h-7zM13 20h7v-9h-7zM4 20h7v-5H4z"/></svg> Overview</button>
+      <button data-view="orders"><svg viewBox="0 0 24 24"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7V5.5a3 3 0 0 1 6 0V7"/></svg> Orders <span class="nav-pip" id="pipOrders" hidden></span></button>
+      <button data-view="products"><svg viewBox="0 0 24 24"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 12l9 4 9-4M3 17l9 4 9-4"/></svg> Products</button>
+      <button data-view="categories"><svg viewBox="0 0 24 24"><path d="M4 5h7v7H4zM13 5h7v7h-7zM4 14h7v5H4zM13 14h7v5h-7z"/></svg> Categories</button>
+      <button data-view="coupons"><svg viewBox="0 0 24 24"><path d="M4 8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4z"/><path d="M14 8v8"/></svg> Coupons</button>
+      <button data-view="inbox"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H7l-3 3z"/></svg> Inbox <span class="nav-pip" id="pipInbox" hidden></span></button>
+      <button data-view="settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.3 1a7 7 0 0 0-2-1.2L14.2 3H9.8l-.4 2.7a7 7 0 0 0-2 1.2l-2.3-1-2 3.4 2 1.5a7 7 0 0 0 0 2.4l-2 1.5 2 3.4 2.3-1a7 7 0 0 0 2 1.2l.4 2.7h4.4l.4-2.7a7 7 0 0 0 2-1.2l2.3 1 2-3.4-2-1.5c.07-.4.1-.8.1-1.2z"/></svg> Settings</button>
+    </nav>
+    <div class="side-foot">
+      <a href="/" target="_blank" rel="noopener" class="side-link">
+        <svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/></svg> View store</a>
+      <button id="logoutBtn" class="side-link">
+        <svg viewBox="0 0 24 24"><path d="M10 20H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h5M16 16l4-4-4-4M20 12H10"/></svg> Sign out</button>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="icon-btn only-sm" id="sideToggle" aria-label="Menu">
+        <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+      <h1 id="viewTitle">Overview</h1>
+      <div class="topbar-tools" id="topbarTools"></div>
+    </header>
+    <div class="content" id="content"></div>
+  </div>
+</div>
+
+<div class="scrim" id="scrim" hidden></div>
+
+<div class="sheet" id="sheet" aria-hidden="true">
+  <header class="sheet-head"><h2 id="sheetTitle"></h2>
+    <button class="icon-btn" data-close aria-label="Close">&times;</button></header>
+  <div class="sheet-body" id="sheetBody"></div>
+</div>
+
+<div class="confirm" id="confirm" aria-hidden="true">
+  <div class="confirm-card">
+    <h3 id="confirmTitle"></h3>
+    <p id="confirmText"></p>
+    <div class="confirm-actions">
+      <button class="btn btn-ghost" id="confirmNo">Cancel</button>
+      <button class="btn btn-danger" id="confirmYes">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+
+<script src="/admin/admin.js" type="module"></script>
+</body>
+</html>

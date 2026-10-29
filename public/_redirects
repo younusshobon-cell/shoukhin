@@ -1,1 +1,4 @@
-/* /index.html 200
+# Functions handle /api/* before this file is consulted.
+/admin      /admin/index.html   200
+/admin/*    /admin/index.html   200
+/*          /index.html         200
