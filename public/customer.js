@@ -9,9 +9,10 @@ async function request(method = 'GET', body) {
 }
 const field = (name,label,value='',type='text',required=false) => `<label class="field"><span>${label}</span><input name="${name}" type="${type}" value="${esc(value)}" ${required?'required':''} maxlength="${name==='name'?120:254}" autocomplete="${name==='name'?'name':name==='phone'?'tel':name==='district'?'address-level1':'email'}"></label>`;
 export async function initCustomer(root) {
+ if (!root) return;
  let state, mode='login', tab='overview';
  function error(message) { const el=root.querySelector('[data-account-message]');if(el){el.textContent=message;el.setAttribute('role','alert');} }
- async function refresh(){state=await request();paint();}
+ async function refresh(){state=await request();if(root.isConnected)paint();}
  function paint(){
   root.innerHTML = state.customer ? dashboard() : auth();
   if (!state.customer) {
