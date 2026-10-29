@@ -2,6 +2,9 @@ import { readSession, bad, json } from './_lib.js';
 
 // Routes reachable without an admin session. Everything else under /api is guarded.
 const PUBLIC = [
+  ['GET',  /^\/api\/customer$/],
+  ['POST', /^\/api\/customer$/],
+  ['PUT',  /^\/api\/customer$/],
   ['POST', /^\/api\/auth\/login$/],
   ['GET',  /^\/api\/auth\/session$/],
   ['POST', /^\/api\/auth\/logout$/],

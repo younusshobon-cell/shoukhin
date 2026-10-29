@@ -376,12 +376,20 @@ let heroTimer = null;
 function initHero(root) {
   const slides = $$('.hero-slide', root);
   const dots = $$('.hero-dots button', root);
+  const copy = $$('.hero-text', root);
+  const primaryCta = $('[data-hero-primary]', root);
   if (slides.length < 2) return;
   let i = 0;
   const go = (n) => {
     i = (n + slides.length) % slides.length;
     slides.forEach((s, x) => s.classList.toggle('on', x === i));
     dots.forEach((d, x) => d.classList.toggle('on', x === i));
+    copy.forEach((text, x) => {
+      text.classList.toggle('on', x === i);
+      text.setAttribute('aria-hidden', String(x !== i));
+    });
+    primaryCta.href = HERO[i].cta;
+    primaryCta.textContent = HERO[i].ctaText;
   };
   dots.forEach((d, x) => d.addEventListener('click', () => { go(x); restart(); }));
   const restart = () => {
@@ -485,16 +493,20 @@ function heroSection() {
         <img src="/assets/hero/${s.img}.webp" alt="" width="2000" height="1125"
              loading="${i === 0 ? 'eager' : 'lazy'}" fetchpriority="${i === 0 ? 'high' : 'auto'}" decoding="async">
       </picture>
-      <div class="hero-in wrap"><div class="hero-copy">
-        <span class="eyebrow">${esc(s.eyebrow)}</span>
-        <h1>${esc(s.h)}</h1>
-        <p>${esc(s.p)}</p>
-        <div class="hero-cta">
-          <a class="btn btn-primary" href="${esc(s.cta)}" data-link>${esc(s.ctaText)}</a>
-          <a class="btn btn-ghost" href="/page/about" data-link>Our story</a>
-        </div>
-      </div></div>
     </div>`).join('')}
+    <div class="hero-in wrap"><div class="hero-copy">
+      <div class="hero-copy-stack">
+        ${HERO.map((s, i) => `<div class="hero-text ${i === 0 ? 'on' : ''}" aria-hidden="${i !== 0}">
+          <span class="eyebrow">${esc(s.eyebrow)}</span>
+          <h1>${esc(s.h)}</h1>
+          <p>${esc(s.p)}</p>
+        </div>`).join('')}
+      </div>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="${esc(HERO[0].cta)}" data-hero-primary data-link>${esc(HERO[0].ctaText)}</a>
+        <a class="btn btn-ghost" href="/page/about" data-link>Our story</a>
+      </div>
+    </div></div>
     <div class="hero-dots">${HERO.map((_, i) =>
       `<button class="${i === 0 ? 'on' : ''}" aria-label="Slide ${i + 1}"></button>`).join('')}</div>
   </section>`;
@@ -1179,6 +1191,7 @@ function routeFor(pathname, search) {
   const seg = pathname.replace(/\/+$/, '').split('/').filter(Boolean);
 
   if (!seg.length) return { title: 'Shoukhin — Thoughtfully yours', html: homePage(), init: ['hero', 'countdown', 'rails'] };
+  if (seg[0] === 'account') return { title: 'My account — Shoukhin', html: '<section class="account-shell wrap"><div id="customer-root" aria-live="polite"><p>Loading your account…</p></div></section>', init: ['customer'] };
   if (seg[0] === 'shop') return { title: 'Shop — Shoukhin', html: shopPage(q), init: ['shop'] };
   if (seg[0] === 'category' && seg[1]) {
     const c = catBySlug(seg[1]);
@@ -1209,6 +1222,7 @@ function render() {
   paintStockBars(main);
   initReveal(main);
   for (const step of route.init) {
+    if (step === 'customer') import('/customer.js').then(({ initCustomer }) => initCustomer($('#customer-root', main)));
     if (step === 'hero') initHero(main);
     if (step === 'countdown') initCountdown(main);
     if (step === 'rails') initRails(main);
@@ -1342,6 +1356,13 @@ function initPDP(root) {
 
 function initCheckout(root) {
   const form = $('#checkoutForm', root);
+  api('/customer').then(({customer}) => {
+    if (!customer || !form?.isConnected) return;
+    for (const [field, key] of Object.entries({customer_name:'name',customer_phone:'phone',customer_email:'email',address:'address',district:'district'})) {
+      const input = form.elements[field];
+      if (input && !input.value && customer[key]) { input.value = customer[key]; input.dispatchEvent(new Event('change', { bubbles: true })); }
+    }
+  }).catch(() => {});
   if (!form) return;
   recalcCheckout();
 

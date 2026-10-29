@@ -60,7 +60,7 @@ export function timingSafeEqual(a, b) {
 }
 
 // Password hash format: pbkdf2$<iterations>$<saltB64url>$<hashB64url>
-export async function pbkdf2Hash(password, saltBytes, iterations = 150000) {
+export async function pbkdf2Hash(password, saltBytes, iterations = 100000) {
   const salt = saltBytes || crypto.getRandomValues(new Uint8Array(16));
   const base = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveBits']);
   const bits = await crypto.subtle.deriveBits(

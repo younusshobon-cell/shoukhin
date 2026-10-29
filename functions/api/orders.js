@@ -1,3 +1,4 @@
+import { readCustomer } from './customer.js';
 import { db, json, bad, num, newOrderId, getSettings, deliveryChargeFor, parseJSON } from './_lib.js';
 import { evaluateCoupon } from './coupons/validate.js';
 
@@ -96,14 +97,15 @@ export async function onRequestPost({ request, env }) {
     return bad('Please enter the transaction ID for your payment');
   }
 
+  const customer = await readCustomer(env, request);
   const id = newOrderId();
   const statements = [
     db(env).prepare(
       `INSERT INTO orders (id,customer_name,customer_phone,customer_email,address,district,thana,postcode,notes,
-         subtotal,discount,delivery_charge,total,coupon_code,payment_method,payment_trx_id,status,source)
-       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,'pending','website')`,
+         subtotal,discount,delivery_charge,total,coupon_code,payment_method,payment_trx_id,status,source,customer_id)
+       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,'pending','website',?)`,
     ).bind(id, name, phone, b.customer_email || null, address, district, b.thana || null, b.postcode || null,
-      b.notes || null, subtotal, discount, delivery, total, couponCode, method, b.payment_trx_id || null),
+      b.notes || null, subtotal, discount, delivery, total, couponCode, method, b.payment_trx_id || null, customer?.id || null),
     db(env).prepare("INSERT INTO order_events (order_id,status,note) VALUES (?,'pending','Order placed from the website')").bind(id),
   ];
   for (const l of lines) {

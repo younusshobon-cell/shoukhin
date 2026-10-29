@@ -179,4 +179,13 @@ The recovered bundle referenced resources outside the connected account. The dep
 
 R2 is not enabled in this account. The MEDIA binding is commented out until the account owner activates R2 and creates `shoukhin-media`; then uncomment the R2 block in wrangler.toml and redeploy. Image-upload APIs return 503 while storage is unavailable; the bundled catalog images remain available.
 
-SESSION_SECRET is configured as an encrypted Pages environment variable. Set a private ADMIN_PASSWORD_HASH in Production and Preview before using the dashboard. Do not commit passwords or hashes. Without an admin password, login returns 503 and protected APIs reject unauthenticated requests. The unsafe hardcoded session-secret fallback from the recovered bundle was removed.
+SESSION_SECRET is configured as an encrypted Pages environment variable. An initial private ADMIN_PASSWORD_HASH is configured in Production and Preview; credentials are supplied separately to the store owner. Rotate it by generating a new hash and updating the encrypted environment variable. Do not commit passwords or hashes. Without an admin password, login returns 503 and protected APIs reject unauthenticated requests. The unsafe hardcoded session-secret fallback from the recovered bundle was removed.
+
+
+### Customer accounts and hero controls
+
+The storefront header and mobile navigation link to `/account/`. Customers can create an email/password account, edit their profile and delivery address, and view orders placed while signed in. Customer sessions use a separate HttpOnly cookie and database-backed session tokens; they never authorize access to `/admin`. Existing guest orders are not automatically linked by email; use the order tracker for those. Account email changes, email verification and self-service password recovery are not implemented.
+
+Apply `migrations/0003_customer_accounts.sql` once to an existing database before deploying these account endpoints. Fresh databases need migrations 0001, 0002 and 0003 in order; never reapply the demo seed to live inventory.
+
+Hero CTAs are a single persistent pair outside the image/text slides. The text stack reserves the largest slide's height, and the main button reserves a stable width as its label and destination change.
